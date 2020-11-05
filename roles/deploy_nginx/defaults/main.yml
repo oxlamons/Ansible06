@@ -1,0 +1,4 @@
+---
+# defaults file for deploy_nginx
+destin_folder: /etc/nginx/sites-enabled/
+destin_index: /var/www/html
