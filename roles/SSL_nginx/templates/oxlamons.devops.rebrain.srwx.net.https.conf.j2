@@ -1,19 +1,18 @@
 server {
  listen 443 ssl;
 
-  ssl_certificate         /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
-  ssl_certificate_key     /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+  ssl_certificate /etc/letsencrypt/live/oxlamons.devops.rebrain.srwx.net/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/oxlamons.devops.rebrain.srwx.net/privkey.pem;
 
+  location /api/sum {
+    rewrite ^ /api/(.*)$ /$1 break;
+    proxy_pass http://localhost:8080;
 
-location / {
-        rewrite ^ api/(.*)$ /$1 break;
-        proxy_pass http://localhost:8080;
-
-  }
+}
 
 location /api/diff {
   include fastcgi_params;
-  fastcgi_param SCRIPT_FILENAME /apt/phpapp/index.php;
+  fastcgi_param SCRIPT_FILENAME /opt/phpapp/index.php;
   fastcgi_pass unix://var/run/php/php7.0-fpm.sock;
   }
 }

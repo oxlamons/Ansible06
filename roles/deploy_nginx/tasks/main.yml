@@ -1,0 +1,5 @@
+---
+# tasks file for deploy_nginx
+- name: Install nginx on ansible_ubuntu
+  apt: allow_unauthenticated=yes name=nginx state=latest
+  

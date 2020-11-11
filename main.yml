@@ -3,6 +3,6 @@
   gather_facts: yes
 
   roles:
-    - deploy_nginx
     - python_install
+    - deploy_nginx
     - SSL_nginx

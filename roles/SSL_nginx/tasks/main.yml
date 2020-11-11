@@ -15,12 +15,13 @@
     mode=0644
   notify: reload nginx
 
-#- name: Install oxlamons.devops.rebrain.srwx.net configuratig
-#  file:
-  #  path=/etc/nginx/sites-available/oxlamons.devops.rebrain.srwx.net.http.conf
-  #  src=/etc/nginx/sites-available/oxlamons.devops.rebrain.srwx.net.http.conf
-    #state=link
-#  notify: reload nginx
+- name: Install oxlamons.devops.rebrain.srwx.net configuratig
+  file:
+    path=/etc/nginx/sites-available/oxlamons.devops.rebrain.srwx.net.http.conf
+    src=/etc/nginx/sites-available/oxlamons.devops.rebrain.srwx.net.http.conf
+    state=link
+    force=yes
+  notify: reload nginx
 
 - name: Recieve SSL sertificate
   shell: letsencrypt certonly --non-interactive --agree-tos --webroot -w /opt/acme -d oxlamons.devops.rebrain.srwx.net --email oxlamons@gmail.com
@@ -36,10 +37,10 @@
     mode=0644
   notify: reload nginx
 
-- name: Setting cron for certificate renewal
-  cron:
-    name: Cerboot certificate renewal
-    job: " letsencrypt renew && service nginx reload "
-    state: present
-    user: root
-    hour: "*/12"
+#- name: Setting cron for certificate renewal
+  #cron:
+  #  name: Cerboot certificate renewal
+    #job: " letsencrypt renew && service nginx reload "
+    #state: present
+  #  user: root
+  #  hour: "*/12"
