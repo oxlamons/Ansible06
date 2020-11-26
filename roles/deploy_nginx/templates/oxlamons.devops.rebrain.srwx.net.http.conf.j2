@@ -1,0 +1,13 @@
+server {
+    listen 80;
+    server_name oxlamons.devops.rebrain.srwx.net;
+
+    location / {
+    return 301 https://oxlamons.devops.rebrain.srwx.net$request_uri;
+    }
+
+    location /.well-known {
+       root  /opt/acme;
+      allow all;
+    }
+}

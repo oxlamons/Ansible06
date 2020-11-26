@@ -1,46 +1,38 @@
 ---
 # tasks file for SSL_nginx
+- name: Upgrade system
+  apt: upgrade=dist state=latest
+
 - name: Installing letsencrypt
-  apt: name=letsencrypt state=present
+  apt: name=letsencrypt state=latest
+  notify: restart nginx
 
 - name:  Add folder for SSL_nginx
   file: path=/opt/acme state=directory
 
-- name: Create site oxlamons.devops.rebrain.srwx.net http
-  template:
-    src=oxlamons.devops.rebrain.srwx.net.http.conf.j2
-    dest=/etc/nginx/sites-enabled/oxlamons.devops.rebrain.srwx.net.http.conf
-    owner=root
-    group=root
-    mode=0644
-  notify: reload nginx
-
-- name: Install oxlamons.devops.rebrain.srwx.net configuratig
-  file:
-    path=/etc/nginx/sites-available/oxlamons.devops.rebrain.srwx.net.http.conf
-    src=/etc/nginx/sites-available/oxlamons.devops.rebrain.srwx.net.http.conf
-    state=link
-    force=yes
-  notify: reload nginx
-
 - name: Recieve SSL sertificate
-  shell: letsencrypt certonly --non-interactive --agree-tos --webroot -w /opt/acme -d oxlamons.devops.rebrain.srwx.net --email oxlamons@gmail.com
+  shell: letsencrypt certonly  --webroot -w /opt/acme --agree-tos -d oxlamons.devops.rebrain.srwx.net -m  oxlamons@gmail.com
   args:
-   creates: /etc/letsencrypt/live/oxlamons.devops.rebrain.srwx.net/fullchain.pem
+   creates: /etc/letsencrypt/live/{{domain_name}}
+
+- name: Generate dhparams
+  shell: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  args:
+   creates: /etc/ssl/certs/dhparam.pem
 
 - name: Create site oxlamons.devops.rebrain.srwx.net https
   template:
     src=oxlamons.devops.rebrain.srwx.net.https.conf.j2
-    dest=/etc/nginx/sites-enabled/oxlamons.devops.rebrain.srwx.net.https.conf
+    dest={{destin_folder}}/{{domain_name}}.https.conf
     owner=root
     group=root
-    mode=0644
-  notify: reload nginx
+    mode=0755
+  notify: restart nginx
 
-#- name: Setting cron for certificate renewal
-  #cron:
-  #  name: Cerboot certificate renewal
-    #job: " letsencrypt renew && service nginx reload "
-    #state: present
-  #  user: root
-  #  hour: "*/12"
+- name: Setting cron for certificate renewal
+  cron:
+    name: Cerboot certificate renewal
+    job: " letsencrypt renew && service nginx reload "
+    state: present
+    user: root
+    hour: "*/12"

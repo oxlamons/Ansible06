@@ -2,4 +2,16 @@
 # tasks file for deploy_nginx
 - name: Install nginx on ansible_ubuntu
   apt: allow_unauthenticated=yes name=nginx state=latest
-  
+  become: yes
+
+- name: Removing default config
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Install system nginx config
+  template:
+    src=oxlamons.devops.rebrain.srwx.net.http.conf.j2
+    dest={{destin_folder}}/{{domain_name}}.http.conf
+    owner=root
+    group=root
+    mode=0755
+  notify: restart nginx
