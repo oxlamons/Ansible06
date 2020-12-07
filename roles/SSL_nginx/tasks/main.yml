@@ -5,7 +5,7 @@
 
 - name: Installing letsencrypt
   apt: name=letsencrypt state=latest
-  notify: restart nginx
+  notify: reloaded nginx
 
 - name:  Add folder for SSL_nginx
   file: path=/opt/acme state=directory
@@ -27,12 +27,12 @@
     owner=root
     group=root
     mode=0755
-  notify: restart nginx
+  notify: reloaded nginx
 
 - name: Setting cron for certificate renewal
   cron:
     name: Cerboot certificate renewal
-    job: " letsencrypt renew && service nginx reload "
+    job: "letsencrypt renew /usr/bin/certbot-auto renew--pre-hook "service nginx stop" --post-hook "service nginx start" >> /var/log/letsencrypt-renew.log"
     state: present
     user: root
-    hour: "*/12"
+    hour: "00 00 * * * "

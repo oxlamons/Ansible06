@@ -1,4 +1,4 @@
 ---
 # handlers file for deploy_nginx
-- name: restart nginx
-  service: name=nginx state=restart
+- name: reloaded nginx
+  service: name=nginx state=reloaded
